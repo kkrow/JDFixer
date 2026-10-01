@@ -62,6 +62,18 @@ Supports CustomCampaigns, Tournament Assistant, all flavors of Multiplayer, OST 
 </div>
 <i>Above Left: Show map Reaction Times is ON. Above Right is OFF.</i>
 
+## Quick RT Window and Presets
+
+A small window floats at the bottom center in front of you in the menu, so you can change reaction time without opening the JDFixer tab:
+
+- **- / + buttons** change the reaction time by 5 or 25 ms
+- **Preset buttons** apply a saved reaction time in one click (the active one is green). Applying a preset switches JDFixer to the Reaction Time slider
+- **+ Save** stores the current reaction time as a preset (up to 8), **Delete** then click a preset to remove it
+- **ON / OFF** toggles JDFixer
+- If Automated Preferences is on, the window shows `Prefs override`: the presets have no effect until Preferences are turned off
+- Mod Settings > **JDFixer RT Window**: show/hide the window, unlock it to drag it with the handle (position is saved), change its size, reset its position, and set **Max Reaction Time** (upper limit of the RT sliders and presets, default 1600 ms)
+- Presets, window position and window size are stored in `/UserData/JDFixer.json`
+
 ## Understanding Preferences Behavior
 Suppose your Jump Distance Preferences contain these NJS-JD pairs: 22-18, 21-16, 18-15.
 

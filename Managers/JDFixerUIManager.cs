@@ -1,7 +1,7 @@
-﻿using CustomCampaigns.Campaign.Missions;
-using JDFixer.Interfaces;
+﻿using JDFixer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Zenject;
 
 
@@ -16,6 +16,14 @@ namespace JDFixer.Managers
 
         private readonly List<IBeatmapInfoUpdater> beatmapInfoUpdaters;
 
+        internal static JDFixerUIManager Instance { get; private set; }
+
+        // Last map that was pushed to the UIs, so the UIs can be refreshed when settings (ex: max reaction time) change
+        private BeatmapKey lastBeatmapKey;
+        private BeatmapLevel lastBeatmapLevel;
+
+        private const string CustomMissionDataSOTypeName = "CustomCampaigns.Campaign.Missions.CustomMissionDataSO";
+
 
         [Inject]
         private JDFixerUIManager(StandardLevelDetailViewController standardLevelDetailViewController, MissionSelectionMapViewController missionSelectionMapViewController, BeatmapLevelsModel beatmapLevelsModel, MainMenuViewController mainMenuViewController, List<IBeatmapInfoUpdater> iBeatmapInfoUpdaters)
@@ -28,6 +36,8 @@ namespace JDFixer.Managers
             mainMenu = mainMenuViewController;
 
             beatmapInfoUpdaters = iBeatmapInfoUpdaters;
+
+            Instance = this;
         }
 
 
@@ -54,6 +64,11 @@ namespace JDFixer.Managers
         public void Dispose()
         {
             //Plugin.Log.Debug("Dispose()");
+
+            if (Instance == this)
+            {
+                Instance = null;
+            }
 
             levelDetail.didChangeDifficultyBeatmapEvent -= LevelDetail_didChangeDifficultyBeatmapEvent;
             levelDetail.didChangeContentEvent -= LevelDetail_didChangeContentEvent;
@@ -109,14 +124,13 @@ namespace JDFixer.Managers
                     // If a map is not dled, this will be the previous selected node's map
                     Plugin.Log.Debug("CC Level: " + MissionSelectionPatch.cc_level.levelID);  // For cross check with arg2.missionId
 
-                    if (arg2.missionData is CustomMissionDataSO)
-                    {
-                        BeatmapLevel beatmapLevel = (arg2.missionData as CustomMissionDataSO).beatmapLevel;
+                    // CustomCampaigns is an optional dependency, so its types are resolved
+                    // at runtime through reflection. This keeps JDFixer loadable without it.
+                    BeatmapLevel ccBeatmapLevel = GetCustomCampaignsBeatmapLevel(arg2.missionData);
 
-                        if (beatmapLevel != null) // lol null check just to print?
-                        {
-                            DiffcultyBeatmapUpdated(arg2.missionData.beatmapKey, beatmapLevel);
-                        }
+                    if (ccBeatmapLevel != null) // lol null check just to print?
+                    {
+                        DiffcultyBeatmapUpdated(arg2.missionData.beatmapKey, ccBeatmapLevel);
                     }
                 }
             }
@@ -124,6 +138,19 @@ namespace JDFixer.Managers
             {
                 DiffcultyBeatmapUpdated(new BeatmapKey(), null);
             }
+        }
+
+
+        private static BeatmapLevel GetCustomCampaignsBeatmapLevel(MissionDataSO missionData)
+        {
+            if (missionData == null || missionData.GetType().FullName != CustomMissionDataSOTypeName)
+            {
+                return null;
+            }
+
+            PropertyInfo beatmapLevelProperty = missionData.GetType().GetProperty("beatmapLevel");
+
+            return beatmapLevelProperty?.GetValue(missionData, null) as BeatmapLevel;
         }
 
 
@@ -158,9 +185,22 @@ namespace JDFixer.Managers
         }
 
 
+        // Re-send the last selected map to all UIs (slider ranges etc. are rebuilt from the current config)
+        internal void RefreshCurrent()
+        {
+            if (lastBeatmapLevel != null)
+            {
+                DiffcultyBeatmapUpdated(lastBeatmapKey, lastBeatmapLevel);
+            }
+        }
+
+
         private void DiffcultyBeatmapUpdated(BeatmapKey beatmapKey, BeatmapLevel beatmapLevel)
         {
             //Plugin.Log.Debug("DiffcultyBeatmapUpdated()");
+
+            lastBeatmapKey = beatmapKey;
+            lastBeatmapLevel = beatmapLevel;
 
             foreach (var beatmapInfoUpdater in beatmapInfoUpdaters)
             {

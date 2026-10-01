@@ -1,0 +1,32 @@
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<vertical id='panel' bg='round-rect-panel' pad='2' spacing='1' horizontal-fit='PreferredSize' vertical-fit='PreferredSize' child-align='MiddleCenter'>
+		<horizontal spacing='1' child-align='MiddleCenter'>
+			<text text='~title_text' font-size='3' align='Left' rich-text='true' min-width='20'/>
+			<button text='~enabled_text' on-click='toggle_enabled' font-size='2.8' pref-width='9' pref-height='6' hover-hint='JDFixer on / off'/>
+			<button text='~save_text' on-click='save_clicked' font-size='2.8' pref-width='13' pref-height='6' hover-hint='Save the current reaction time as a preset'/>
+			<button text='~delete_text' on-click='delete_clicked' font-size='2.8' pref-width='13' pref-height='6' hover-hint='Click, then click a preset to delete it'/>
+		</horizontal>
+		<horizontal spacing='1' child-align='MiddleCenter'>
+			<button text='-25' on-click='rt_minus_big' font-size='2.8' pref-width='8' pref-height='6'/>
+			<button text='-5' on-click='rt_minus_small' font-size='2.8' pref-width='8' pref-height='6'/>
+			<text text='~rt_text' font-size='4' align='Center' rich-text='true' min-width='24'/>
+			<button text='+5' on-click='rt_plus_small' font-size='2.8' pref-width='8' pref-height='6'/>
+			<button text='+25' on-click='rt_plus_big' font-size='2.8' pref-width='8' pref-height='6'/>
+		</horizontal>
+		<horizontal spacing='1' child-align='MiddleCenter' active='~row1_active'>
+				<button text='~s0_text' on-click='s0_click' active='~s0_active' font-size='3' pref-width='13' pref-height='6'/>
+				<button text='~s1_text' on-click='s1_click' active='~s1_active' font-size='3' pref-width='13' pref-height='6'/>
+				<button text='~s2_text' on-click='s2_click' active='~s2_active' font-size='3' pref-width='13' pref-height='6'/>
+				<button text='~s3_text' on-click='s3_click' active='~s3_active' font-size='3' pref-width='13' pref-height='6'/>
+		</horizontal>
+		<horizontal spacing='1' child-align='MiddleCenter' active='~row2_active'>
+				<button text='~s4_text' on-click='s4_click' active='~s4_active' font-size='3' pref-width='13' pref-height='6'/>
+				<button text='~s5_text' on-click='s5_click' active='~s5_active' font-size='3' pref-width='13' pref-height='6'/>
+				<button text='~s6_text' on-click='s6_click' active='~s6_active' font-size='3' pref-width='13' pref-height='6'/>
+				<button text='~s7_text' on-click='s7_click' active='~s7_active' font-size='3' pref-width='13' pref-height='6'/>
+		</horizontal>
+		<horizontal active='~empty_active'>
+			<text text='No presets yet - set a value and press + Save' font-size='2.4' font-color='#aaaaaaff' align='Center'/>
+		</horizontal>
+	</vertical>
+</bg>

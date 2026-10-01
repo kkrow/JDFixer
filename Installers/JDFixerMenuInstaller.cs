@@ -11,6 +11,7 @@ namespace JDFixer.Installers
             Container.BindInterfacesTo<JDFixerUIManager>().AsSingle();
             Container.BindInterfacesTo<MainMenuUI>().AsSingle();
             Container.BindInterfacesTo<CustomOnlineUI>().AsSingle();
+            Container.BindInterfacesTo<QuickRTUI>().AsSingle();
 
             if (PluginConfig.Instance.legacy_display_enabled)
             {

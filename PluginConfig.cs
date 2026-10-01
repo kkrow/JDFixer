@@ -56,6 +56,28 @@ namespace JDFixer
         internal bool af_enabled { get; set; } = false;
 
 
+        // Quick RT window + RT presets (in-game window at the bottom center of the menu)
+        internal virtual bool quick_rt_enabled { get; set; } = true;
+        internal virtual bool quick_rt_unlocked { get; set; } = false;   // true = show the drag handle so the window can be moved
+        internal virtual float quick_rt_scale { get; set; } = 0.65f;
+        internal virtual float quick_rt_pos_x { get; set; } = 0f;
+        internal virtual float quick_rt_pos_y { get; set; } = 0.3f;
+        internal virtual float quick_rt_pos_z { get; set; } = 1.8f;
+        internal virtual float quick_rt_rot_x { get; set; } = 23f;
+        internal virtual float quick_rt_rot_y { get; set; } = 0f;
+        internal virtual float quick_rt_rot_z { get; set; } = 0f;
+
+        [UseConverter(typeof(ListConverter<RTQuickPreset>))]
+        [NonNullable]
+        internal virtual List<RTQuickPreset> rt_quick_presets { get; set; } = new List<RTQuickPreset>
+        {
+            new RTQuickPreset(400f),
+            new RTQuickPreset(500f),
+            new RTQuickPreset(600f),
+            new RTQuickPreset(800f)
+        };
+
+
         /// <summary>
         /// Call this to force BSIPA to update the config file. This is also called by BSIPA if it detects the file was modified.
         /// </summary>
@@ -87,6 +109,22 @@ namespace JDFixer
         {
             this.njs = njs;
             this.jumpDistance = jumpDistance;
+        }
+    }
+
+    // Quick RT window preset (single reaction time value in ms)
+    internal class RTQuickPreset
+    {
+        internal virtual float reactionTime { get; set; } = 500f;
+
+        public RTQuickPreset()
+        {
+
+        }
+
+        internal RTQuickPreset(float reactionTime)
+        {
+            this.reactionTime = reactionTime;
         }
     }
 

@@ -55,6 +55,31 @@ namespace JDFixer.UI
         }
 
 
+        // Called by the Quick RT window when it toggles JDFixer on / off, so the checkbox follows it
+        internal void ExternalEnabledRefresh()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
+        }
+
+
+        // Called by the Quick RT window when it changes the RT setting or Max Reaction Time
+        internal void ExternalRefresh()
+        {
+            if (RT_Slider != null)
+            {
+                var rt_range = RT_Slider.Slider.GetComponentInChildren<HMUI.CustomFormatRangeValuesSlider>();
+                if (rt_range != null)
+                {
+                    rt_range.maxValue = PluginConfig.Instance.maxReactionTime;
+                }
+            }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Max_RT_Slider)));
+
+            Refresh();
+        }
+
+
         //=============================================================================================
         
         [UIValue("enabled")]
@@ -64,6 +89,9 @@ namespace JDFixer.UI
             set
             {
                 PluginConfig.Instance.enabled = value;
+                PluginConfig.Instance.Changed();
+
+                QuickRTUI.ExternalEnabledRefresh();
             }
         }
         [UIAction("set_enabled")]

@@ -64,6 +64,26 @@ namespace JDFixer.UI
         }
 
 
+        // Called by the Quick RT window when it toggles JDFixer on / off, so the checkbox follows it
+        internal void ExternalEnabledRefresh()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
+        }
+
+
+        // Called by the Quick RT window when it changes the RT setting or Max Reaction Time
+        internal void ExternalRefresh()
+        {
+            if (JD_Slider == null || RT_Slider == null)
+            {
+                return;
+            }
+
+            RefreshSliderMinMax();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Slider_Setting_Value)));
+        }
+
+
         //=============================================================================================
 
         [UIValue("enabled")]
@@ -73,6 +93,9 @@ namespace JDFixer.UI
             set
             {
                 PluginConfig.Instance.enabled = value;
+                PluginConfig.Instance.Changed();
+
+                QuickRTUI.ExternalEnabledRefresh();
             }
         }
         [UIAction("set_enabled")]
