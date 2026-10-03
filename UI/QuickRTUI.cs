@@ -97,12 +97,29 @@ namespace JDFixer.UI
             _screen.HandleSide = BSMLFloatingScreen.Side.Bottom;
             _screen.HandleReleased += OnHandleReleased;
 
+            Remove_CurvedCanvasSettings();
+
             float scale = Mathf.Clamp(cfg.quick_rt_scale, 0.3f, 2f);
             _screen.transform.localScale = new Vector3(0.02f * scale, 0.02f * scale, 0.02f * scale);
 
             BeatSaberMarkupLanguage.BSMLParser.Instance.Parse(BeatSaberMarkupLanguage.Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), WindowResource), _screen.gameObject, this);
 
             Add_Raycast_Blocker();
+        }
+
+        // BSML puts an HMUI.CurvedCanvasSettings on the floating screen and calls SetRadius(0) because we ask for
+        // a flat screen. With a radius of 0, CurvedCanvasSettings.TransformPointFromCanvasTo3D divides x by that
+        // radius, so the panel's vertices turn into NaN/Inf and the broken mesh bleeds into the shared UI canvas:
+        // elements of other mods end up displaced and tilted. The component has no sprite here, so it draws nothing
+        // anyway - removing it is safe and keeps our NaN out of the geometry.
+        private void Remove_CurvedCanvasSettings()
+        {
+            var curved = _screen.GetComponent<HMUI.CurvedCanvasSettings>();
+
+            if (curved != null)
+            {
+                UnityEngine.Object.Destroy(curved);
+            }
         }
 
         private void DestroyWindow()
